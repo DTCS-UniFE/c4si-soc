@@ -1,0 +1,30 @@
+diff --git a/honeypots/helper.py b/honeypots/helper.py
+index 5a44073..9745853 100644
+--- a/honeypots/helper.py
++++ b/honeypots/helper.py
+@@ -27,6 +27,16 @@ from OpenSSL import crypto
+ from psutil import process_iter
+ from psycopg import connect as psycopg_connect, sql
+ 
++class JsonSafeFormatter(logging.Formatter):
++    def format(self, record):
++        if isinstance(record.msg, dict):
++            try:
++                record.msg = json.dumps(record.msg)
++            except Exception as e:
++                # fallback se json.dumps fallisce (es. oggetti non serializzabili)
++                record.msg = str(record.msg)
++        return super().format(record)
++
+ def set_up_error_logging():
+     _logger = logging.getLogger("honeypots.error")
+     if not _logger.handlers:
+@@ -174,7 +184,7 @@ def _set_up_syslog_handler(address: str | None, facility: int | None) -> Handler
+             return None
+         address = (url.hostname, url.port)
+     handler = SysLogHandler(address=address, facility=facility)
+-    formatter = Formatter("[%(name)s] [%(levelname)s] - %(message)s")
++    formatter = JsonSafeFormatter("[%(name)s] [%(levelname)s] - %(message)s")
+     handler.setFormatter(formatter)
+     return handler
+ 

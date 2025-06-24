@@ -1,0 +1,33 @@
+<group name="syslog,honeypot,">
+  <rule id="100100" level="5">
+    <decoded_as>honeypot-syslog</decoded_as>
+    <action>connection</action>
+    <description>Honeypot '$(server)' - Connessione rilevata da $(src_ip):$(src_port) → $(dest_ip):$(dest_port)</description>
+  </rule>
+  
+  <rule id="100101" level="7">
+    <decoded_as>honeypot-syslog</decoded_as>
+    <action>login</action>
+    <status>failed</status>
+    <description>Honeypot '$(server)' - Login fallito da $(src_ip):$(src_port) → $(dest_ip):$(dest_port) - utente '$(username)' password '$(password)'</description>
+  </rule>
+  
+  <rule id="100102" level="7">
+    <decoded_as>honeypot-syslog</decoded_as>
+    <action>login</action>
+    <status>success</status>
+    <description>Honeypot '$(server)' - Login con credenziali corrette da $(src_ip):$(src_port) → $(dest_ip):$(dest_port) - utente '$(username)' password '$(password)'</description>
+  </rule>
+  
+  <rule id="100103" level="7">
+    <decoded_as>honeypot-syslog</decoded_as>
+    <action>command</action>
+    <!--
+      NB: Il campo "data" va in conflitto con un campo già presente nell'indexer di Wazuh,
+      quindi nella pipeline di ingestion di Filebeat lo rinominiamo in "info" in modo che
+      venga salvato con successo all'interno dell'indexer. Per accedere al valore qui, nella
+      descrizione, va invece lasciato "data.", in quanto la rinominazione avviene dopo.
+    -->
+    <description>Honeypot '$(server)' - Ricevuto comando '$(data.cmd)' args: '$(data.args)' da $(src_ip):$(src_port) → $(dest_ip):$(dest_port)</description>
+  </rule>
+</group>

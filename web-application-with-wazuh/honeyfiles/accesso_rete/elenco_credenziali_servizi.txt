@@ -1,0 +1,48 @@
+Elenco delle Credenziali di Accesso ai Servizi
+
+Servizio: Email Aziendale
+
+Username: employee@example.com
+Password: P@ssw0rd!
+Servizio: VPN Aziendale
+
+Username: vpn_user
+Password: VpN_P@55!
+Servizio: Portale Interno
+
+Username: portal_user
+Password: Portal123!
+Servizio: Sistema CRM
+
+Username: crm_user
+Password: CrmP@55!
+
+Username: employee@example.com
+Password: P@ssw0rd!
+Servizio: VPN Aziendale
+
+Username: vpn_user
+Password: VpN_P@55!
+Servizio: Portale Interno
+
+Username: portal_user
+Password: Portal123!
+Servizio: Sistema CRM
+
+Username: crm_user
+Password: CrmP@55!
+
+Username: employee@example.com
+Password: P@ssw0rd!
+Servizio: VPN Aziendale
+
+Username: vpn_user
+Password: VpN_P@55!
+Servizio: Portale Interno
+
+Username: portal_user
+Password: Portal123!
+Servizio: Sistema CRM
+
+Username: crm_user
+Password: CrmP@55!
