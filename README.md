@@ -4,6 +4,10 @@ Questo progetto consente di creare un SOC velocemente in un ambiente containeriz
 - Applicazione Web PHP (con vulnerabilità), con database MySQL (MariaDB) e agente Wazuh. Contiene file "sensibili" (finti)
 - Honeypot di numerosi servizi, che loggano i tentativi di accesso e i comandi ricevuti e li inoltrano a Wazuh mediante Syslog
 
+## Architettura del sistema
+La figura sottostante mostra l'architettura generale del SOC realizzato.
+![Architettura generale del SOC](images/architecture.png "Architettura SOC")
+
 ## Servizi principali
 - **honeypot/**: honeypot di numerosi servizi
 - **test/**: tentativi di accesso ad alcuni servizi honeypot (SSH, FTP, MySQL) ed exploit Web App con Sqlmap
