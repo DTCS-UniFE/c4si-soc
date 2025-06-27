@@ -1,34 +1,35 @@
 # Security Operations Center (SOC)
-Questo progetto consente di creare un SOC velocemente in un ambiente containerizzato. Il SOC è composto da:
-- Wazuh (SIEM): raccolta, analisi, aggregazione e visualizzazione di log, generazione alert
-- Applicazione Web PHP (con vulnerabilità), con database MySQL (MariaDB) e agente Wazuh. Contiene file "sensibili" (finti)
-- Honeypot di numerosi servizi, che loggano i tentativi di accesso e i comandi ricevuti e li inoltrano a Wazuh mediante Syslog
+This project allows you to quickly set up a SOC in a containerized environment. The SOC consists of:
+- **Wazuh (SIEM)**: log collection, analysis, aggregation, visualization, and alert generation
+- **Vulnerable PHP web application** with a **MySQL (MariaDB) database** and **Wazuh agent**. It contains (fake) "sensitive" files
+- **Honeypot** for several services, which logs access attempts and received commands and forwards them to Wazuh via Syslog
 
-## Architettura del sistema
-La figura sottostante mostra l'architettura generale del SOC realizzato.
-![Architettura generale del SOC](images/architecture.png "Architettura SOC")
+During the SOC setup, various configurations are applied to Wazuh (rules, decoders, ingestion pipelines, and manager configuration). Additionally, some automated tests (login attempts and SQL Injection exploits) are executed to generate security events (logs) that will be visible in Wazuh.
 
-## Servizi principali
-- **honeypot/**: honeypot di numerosi servizi
-- **test/**: tentativi di accesso ad alcuni servizi honeypot (SSH, FTP, MySQL) ed exploit Web App con Sqlmap
-- **setup-wazuh/**: carica regole e decoder personalizzati in Wazuh, oltre che a modificarne la configurazione, tutto tramite API
-- **web-application-with-wazuh/**: applicazione PHP vulnerabile + database + honeyfiles + Wazuh agent
+## System Architecture
+The figure below shows the general architecture of the implemented SOC.
+![SOC architecture](images/architecture.png "SOC architecture")
 
-## File principali
-- `docker-compose.yml`: definisce e orchestra tutti i container
-- `clone-and-setup-wazuh.sh`: clona la repository Wazuh-Docker e genera i certificati richiesti
-- `.gitmodules`: include una dipendenza Git esterna (app Web PHP)
+## Main Services
+- **honeypot/**: honeypot for several services
+- **test/**: attempts to access some honeypot services (SSH, FTP, MySQL) and Web App exploitation using Sqlmap
+- **setup-wazuh/**: uploads custom rules and decoders into Wazuh, as well as modifies its configuration, all via API
+- **web-application-with-wazuh/**: vulnerable PHP application + database + honeyfiles + Wazuh agent
 
-## Avvio
+## Main Files
+- `docker-compose.yml`: defines and orchestrates all containers
+- `clone-and-setup-wazuh.sh`: clones the Wazuh-Docker repository and generates the required certificates
+
+## Startup
 ```bash
 bash ./clone-and-setup-wazuh.sh
 docker compose up --build --force-recreate
 ```
-Wazuh sarà accessibile all'indirizzo https://localhost, credenziali di default "admin" / "SecretPassword".
-L'elenco degli eventi (log) di sicurezza si potrà vedere cliccando su "Threat Hunting" e poi, in alto a sinistra, "Events".
+Wazuh will be accessible at https://localhost with default credentials "admin" / "SecretPassword".
+The list of security events (logs) can be viewed by clicking "Threat Hunting" and then, at the top left, "Events".
 
 ## Spegnimento
 ```bash
 docker compose down --volumes
 ```
-Si consiglia di rimuovere anche i volumi (--volumes) per evitare problemi con l'enrollment degli agenti Wazuh, oltre che la ridefinizione di regole, decoder e configurazione di Wazuh Manager.
+It is advisable to also remove the volumes (--volumes) to avoid issues with Wazuh agent enrollment, as well as redefining rules, decoders, and the Wazuh Manager configuration.
