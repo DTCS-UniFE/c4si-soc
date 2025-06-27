@@ -37,6 +37,9 @@ do
     echo "Wazuh API is not ready yet..."
     sleep 5
 done
+# A volte l'API non è pronta a rispondere anche se è contattabile
+# sulla porta 55000, aggiungiamo un altro po' di delay
+sleep 10
 
 echo "Authenticating to API..."
 

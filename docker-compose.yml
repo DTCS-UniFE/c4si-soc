@@ -11,14 +11,16 @@ services:
       - WAZUH_INDEXER=wazuh.indexer
       - WAZUH_INDEXER_USER=admin
       - WAZUH_INDEXER_PASSWORD=SecretPassword
+
   web-app-with-wazuh:
-    build: web-application-with-wazuh
+    build:
+      context: web-application-with-wazuh
+      args:
+      - WAZUH_MANAGER=wazuh.manager
+      - WAZUH_AGENT_NAME=agente47-webserver-wazuh
     cap_add:
       - NET_ADMIN
       - NET_RAW
-    environment:
-      - WAZUH_MANAGER=wazuh.manager
-      - WAZUH_AGENT_NAME=agente47-webserver-wazuh
     ports:
       - 80:80
     depends_on:
@@ -38,7 +40,7 @@ services:
     # senza conflitti (80, 443, etc.).
     # L'IP ci viene stampato dall'entrypoint
     # all'avvio del container.
-  
+
   test-services:
     build: test
     environment:

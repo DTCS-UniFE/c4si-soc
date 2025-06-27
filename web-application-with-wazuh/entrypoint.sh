@@ -35,6 +35,10 @@ done
 # Imposta l'indirizzo del manager
 sed -i "s/WAZUH_MANAGER_IP/${WAZUH_MANAGER}/" /var/ossec/etc/ossec.conf
 
+# Imposta il nome del client
+sed -i "s/WAZUH_AGENT_NAME/${WAZUH_AGENT_NAME}/" /var/ossec/etc/ossec.conf
+
+
 # Avvia l'agente Wazuh
 /usr/bin/env /var/ossec/bin/wazuh-control start
 /usr/bin/env /var/ossec/bin/wazuh-control status
@@ -48,6 +52,7 @@ echo "Agente Wazuh in esecuzione"
 
 # Modifica la configurazione di Suricata
 # Imposta la rete esterna a "any", visto che lavoriamo dentro Docker con IP sempre privati
+# NB: Queste non sono variabili shell, non devono essere sostituite.
 sed -i 's/EXTERNAL_NET: "!$HOME_NET"/EXTERNAL_NET: "any"/' /etc/suricata/suricata.yaml
 
 # Disabilitiamo la scrittura di statistiche, molto pesanti e che
@@ -71,9 +76,6 @@ mv /etc/suricata/suricata.yaml.tmp /etc/suricata/suricata.yaml
 
 # Avvia Suricata
 suricata -c /etc/suricata/suricata.yaml -i eth0 &
-
-## Shell
-#bash
 
 # Cat dell'access log di Apache per tenere aperto il container
 tail -f /var/log/apache2/access.log

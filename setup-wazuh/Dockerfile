@@ -1,9 +1,7 @@
 FROM alpine:latest
 
-RUN apk add curl jq
+RUN apk add --no-cache curl jq
 
 COPY . .
-
-#CMD ["tail", "-f", "/dev/null"]
 
 CMD ["sh", "setup_wazuh.sh"]

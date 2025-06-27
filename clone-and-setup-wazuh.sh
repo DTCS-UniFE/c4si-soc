@@ -22,3 +22,5 @@ else
 fi
 
 echo "Setup di Wazuh terminato."
+echo "Ora puoi far partire il SOC con:"
+echo "docker compose up --build --force-recreate"

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SLEEP=30
+SLEEP=60
 
 if [ -z "$HONEYPOT" ]; then
     HONEYPOT="honeypot"
@@ -26,3 +26,5 @@ python ssh_test.py "$HONEYPOT"
 sleep 3
 
 sh ./sqlmap.sh "$WEBAPP"
+
+echo "Tutti i test completati."
