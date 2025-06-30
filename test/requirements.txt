@@ -1,3 +1,5 @@
 paramiko
 mysql-connector-python
 sqlmap
+requests
+urllib3 # should be installed by default with requests

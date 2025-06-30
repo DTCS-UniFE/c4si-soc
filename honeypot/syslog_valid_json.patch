@@ -12,7 +12,7 @@ index 5a44073..9745853 100644
 +            try:
 +                record.msg = json.dumps(record.msg)
 +            except Exception as e:
-+                # fallback se json.dumps fallisce (es. oggetti non serializzabili)
++                # If json.dumps fails, fallback to str
 +                record.msg = str(record.msg)
 +        return super().format(record)
 +

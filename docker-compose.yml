@@ -1,10 +1,17 @@
 include:
   - wazuh-docker/single-node/docker-compose.yml
 
+# docker-compose.override.yml will disable attacching to the wazuh.dashboard container
+# because it's way too verbose and makes following other logs too difficult.
+
 services:
   setup-wazuh:
     build: setup-wazuh
     environment:
+      # These are the default credentials that come with Wazuh-docker 4.12.0,
+      # our chosen version for Wazuh and its agent.
+      # If you want to change these credentials, you must also change them
+      # in ./wazuh-docker/single-node/docker-compose.yml.
       - WAZUH_MANAGER=wazuh.manager
       - WAZUH_API_USER=wazuh-wui
       - WAZUH_API_PASSWORD=MyS3cr37P450r.*-
@@ -16,9 +23,10 @@ services:
     build:
       context: web-application-with-wazuh
       args:
-      - WAZUH_MANAGER=wazuh.manager
-      - WAZUH_AGENT_NAME=agente47-webserver-wazuh
+        - WAZUH_MANAGER=wazuh.manager
+        - WAZUH_AGENT_NAME=agente47-webserver-wazuh
     cap_add:
+      # Needed for Suricata
       - NET_ADMIN
       - NET_RAW
     ports:
@@ -34,16 +42,16 @@ services:
     depends_on:
       setup-wazuh:
         condition: service_completed_successfully
-    # Non esponiamo porte: accediamo direttamente
-    # all'IP del container, così possiamo farlo
-    # ascoltare su tutte le porte che vogliamo
-    # senza conflitti (80, 443, etc.).
-    # L'IP ci viene stampato dall'entrypoint
-    # all'avvio del container.
+    # We do not expose ports: we will access directly
+    # the container's IP, so we can make it listen
+    # on any ports (80, 443, etc.) without conflicts.
+    # The IP is printed by the entrypoint
+    # when the container starts.
 
   test-services:
     build: test
     environment:
+      # Container names (aka hostnames) to be tested
       - HONEYPOT=honeypot
       - WEBAPP=web-app-with-wazuh
     depends_on:

@@ -1,20 +1,22 @@
-#!/bin/bash
+#!/bin/sh
 
-# Stampa IP
-echo "Honeypot: i miei IP sono:"
+set -eu
+
+# Print IPs
+echo "Honeypot: my IPs are:"
 ip --color -br a | grep -v lo
 
 if [ -z "$WAZUH_MANAGER" ]; then
     WAZUH_MANAGER="wazuh.manager"
 fi
 
-# Imposta l'indirizzo di Wazuh nel file di configurazione
+# Set the Wazuh address in the configuration file
 sed -i "s/WAZUH_MANAGER_IP/${WAZUH_MANAGER}/" config.json
 
-# Stampa configurazione
+# Print configuration
 #cat config.json
 
-# Avvio vari honeypot
+# Start various honeypots
 python -m honeypots \
     --config config.json \
     --setup all \

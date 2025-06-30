@@ -23,10 +23,10 @@
     <decoded_as>honeypot-syslog</decoded_as>
     <action>command</action>
     <!--
-      NB: Il campo "data" va in conflitto con un campo già presente nell'indexer di Wazuh,
-      quindi nella pipeline di ingestion di Filebeat lo rinominiamo in "info" in modo che
-      venga salvato con successo all'interno dell'indexer. Per accedere al valore qui, nella
-      descrizione, va invece lasciato "data.", in quanto la rinominazione avviene dopo.
+      NB: The "data" field conflicts with an existing field in the Wazuh indexer,
+      so in the Filebeat ingestion pipeline we rename it to "info" so that
+      it can be successfully saved in the indexer. To access the value here, in the
+      description, you should still use "data.", since the renaming happens afterwards.
     -->
     <description>Honeypot '$(server)' - Ricevuto comando '$(data.cmd)' args: '$(data.args)' da $(src_ip):$(src_port) → $(dest_ip):$(dest_port)</description>
   </rule>

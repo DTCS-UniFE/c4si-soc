@@ -1,45 +1,44 @@
 #!/bin/bash
 
-# Esce al primo errore
+# Exit on first error
 set -eu
 
-# Username e password per l'utente di MySQL (MariaDB)
+# Username and password for the MySQL (MariaDB) user
 SQL_USERNAME="cyberuser"
-SQL_PASSWORD="password_molto_sicura"
+SQL_PASSWORD="very_secure_password"
 
-# Inserisce nome utente e password nel file php
-sed -i "s/UTENTE_DATABASE/$SQL_USERNAME/" /var/www/html/db.php
-sed -i "s/PASSWORD_DATABASE/$SQL_PASSWORD/" /var/www/html/db.php
+# Insert username and password into the php file
+sed -i "s/DATABASE_USER/$SQL_USERNAME/" /var/www/html/db.php
+sed -i "s/DATABASE_PASSWORD/$SQL_PASSWORD/" /var/www/html/db.php
 
-# Avvia MySQL (MariaDB) come utente mysql
+# Start MySQL (MariaDB) as mysql user
 su -s /bin/bash mysql -c "/usr/sbin/mysqld" &
 
-# Aspetta che il database si avvii
-# NON ci deve essere uno spazio fra -p e la password.
+# Wait for the database to start
+# There MUST NOT be a space between -p and the password.
 until mysqladmin ping -u $SQL_USERNAME -p$SQL_PASSWORD >/dev/null 2>&1;
 do
     echo "MySQL (MariaDB) is not ready yet..."
     sleep 3
 done
 
-# Crea un nuovo utente e ne imposta la password, importa il database e dei dati di esempio
+# Create a new user and set its password, import the database and some sample data
 /usr/bin/mysql -e "CREATE USER '$SQL_USERNAME'@'localhost' IDENTIFIED BY '$SQL_PASSWORD';"
 /usr/bin/mysql -e "GRANT ALL PRIVILEGES ON *.* TO '$SQL_USERNAME'@'localhost';"
 /usr/bin/mysql -e "FLUSH PRIVILEGES;"
-# NON ci deve essere uno spazio fra -p e la password.
+# There MUST NOT be a space between -p and the password.
 /usr/bin/mysql -u $SQL_USERNAME -p$SQL_PASSWORD < /cyberbase.sql
 
-# Avvia apache2
+# Start apache2
 /usr/sbin/apache2ctl start
 
-# Imposta l'indirizzo del manager
+# Set the manager address
 sed -i "s/WAZUH_MANAGER_IP/${WAZUH_MANAGER}/" /var/ossec/etc/ossec.conf
 
-# Imposta il nome del client
+# Set the client name
 sed -i "s/WAZUH_AGENT_NAME/${WAZUH_AGENT_NAME}/" /var/ossec/etc/ossec.conf
 
-
-# Avvia l'agente Wazuh
+# Start the Wazuh agent
 /usr/bin/env /var/ossec/bin/wazuh-control start
 /usr/bin/env /var/ossec/bin/wazuh-control status
 status=$?
@@ -48,34 +47,33 @@ if [ $status -ne 0 ]; then
     exit $status
 fi
 
-echo "Agente Wazuh in esecuzione"
+echo "Wazuh agent running"
 
-# Modifica la configurazione di Suricata
-# Imposta la rete esterna a "any", visto che lavoriamo dentro Docker con IP sempre privati
-# NB: Queste non sono variabili shell, non devono essere sostituite.
+# Modify Suricata configuration
+# Set the external network to "any", since we are working inside Docker with always private IPs
+# Note: These are not shell variables, they must not be replaced.
 sed -i 's/EXTERNAL_NET: "!$HOME_NET"/EXTERNAL_NET: "any"/' /etc/suricata/suricata.yaml
 
-# Disabilitiamo la scrittura di statistiche, molto pesanti e che
-# spammano log su wazuh-manager, sia in eve.json che in stats.log
-# Disattiva le statistiche globalmente
+# Disable statistics writing, which is heavy and spams logs on wazuh-manager, both in eve.json and stats.log
+# Disable statistics globally
 sed -i '/stats:/ {n; s/enabled: yes/enabled: no/}' /etc/suricata/suricata.yaml
-# Disattiva le statistiche anche in eve.json in modo che non vengano dati errori o warning all'avvio
+# Also disable statistics in eve.json to avoid errors or warnings at startup
 awk '
 /- stats:/ {
-    print;                   # stampa la riga - stats:
-    getline nextLine;        # leggi la riga successiva
+    print;                   # print the line - stats:
+    getline nextLine;        # read the next line
     if (nextLine ~ /totals: yes/) {
-        print "            enabled: no";  # stampa la nuova riga (12 spazi di indentazione)
+        print "            enabled: no";  # print the new line (12 spaces indentation)
     }
-    print nextLine;          # stampa comunque la riga successiva
+    print nextLine;          # always print the next line
     next;
 }
-{ print }                    # per tutte le altre righe, stampa normalmente
+{ print }                    # for all other lines, print normally
 ' /etc/suricata/suricata.yaml > /etc/suricata/suricata.yaml.tmp && \
 mv /etc/suricata/suricata.yaml.tmp /etc/suricata/suricata.yaml
 
-# Avvia Suricata
+# Start Suricata
 suricata -c /etc/suricata/suricata.yaml -i eth0 &
 
-# Cat dell'access log di Apache per tenere aperto il container
+# Cat Apache's access log to keep the container open
 tail -f /var/log/apache2/access.log

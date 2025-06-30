@@ -1,9 +1,9 @@
 # Web App with Wazuh
-Applicazione Web PHP (vulnerabile) + Database MySQL + agente Wazuh per il monitoraggio di accessi, eventi sospetti e accesso a file sensibili (honeyfiles).
+Vulnerable PHP Web Application + MySQL Database + Wazuh agent for monitoring logins, suspicious events, and access to sensitive files (honeyfiles).
 
-## Contenuto
-- `app/`: applicazione PHP vulnerabile
-- `honeyfiles/`: file sensibili per attività di auditing
-- `entrypoint.sh`: configurazione e avvio
-- `apache-config.conf`, `ossec.conf`: configurazioni Apache e agente Wazuh
-- `cyberbase.sql`: dump del database per ripristino
+## Contents
+- `app/`: vulnerable PHP application
+- `honeyfiles/`: sensitive files for auditing activities
+- `entrypoint.sh`: setup and startup script
+- `apache-config.conf`, `ossec.conf`: Apache and Wazuh agent configurations
+- `cyberbase.sql`: database dump for restoration on startup

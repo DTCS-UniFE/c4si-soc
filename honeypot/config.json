@@ -1,6 +1,6 @@
 {
    "logs":"syslog,json",
-   "syslog_address": "udp://172.17.0.1:514",
+   "syslog_address": "udp://WAZUH_MANAGER_IP:514",
    "syslog_facility":4,
    "filter":"",
    "interface":"",

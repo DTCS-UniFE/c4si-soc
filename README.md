@@ -32,4 +32,4 @@ The list of security events (logs) can be viewed by clicking "Threat Hunting" an
 ```bash
 docker compose down --volumes
 ```
-It is advisable to also remove the volumes (--volumes) to avoid issues with Wazuh agent enrollment, as well as redefining rules, decoders, and the Wazuh Manager configuration.
+It is highly suggested to also remove the volumes (--volumes) to avoid issues with Wazuh agent enrollment, as well as possible issues redefining rules, decoders, and the Wazuh Manager configuration.

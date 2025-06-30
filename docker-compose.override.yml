@@ -1,0 +1,4 @@
+# Don't attach to the wazuh.dashboard container - it's too verbose.
+services:
+  wazuh.dashboard:
+    attach: false

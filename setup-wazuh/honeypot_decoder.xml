@@ -1,6 +1,6 @@
 <decoder name="honeypot-syslog">
     <!--
-    Esempi di log:
+    Log examples:
     [honeypotslogger_QSSHServer_9bed6f99] [INFO] - {"action": "connection", "src_ip": "172.20.0.1", "src_port": 35856, "server": "ssh_server", "dest_ip": "0.0.0.0", "dest_port": 22}
     [honeypotslogger_QFTPServer_b8876af8] [INFO] - {"action": "command", "data": {"cmd": "LIST", "args": "()"}, "src_ip": "172.19.0.1", "src_port": 41800, "server": "ftp_server", "dest_ip": "0.0.0.0", "dest_port": 21}
     -->

@@ -1,15 +1,15 @@
-# Adattato da https://writing.pupius.co.uk/apache-and-php-on-docker-44faef716150
-# e https://github.com/noenv/docker-wazuh-agent
+# Adapted from https://writing.pupius.co.uk/apache-and-php-on-docker-44faef716150
+# and https://github.com/noenv/docker-wazuh-agent
 #FROM debian:12
 FROM i386/debian:12
 
-# La versione a 32 bit permette di effettuare exploit di sqlmap
-# automaticamente, e non introduce nuove vulnerabilità. Per tutto
-# il resto si può usare la versione a 64 bit.
+# The 32-bit version allows sqlmap exploits automatically,
+# and does not introduce new vulnerabilities. For everything
+# else, you can use the 64-bit version.
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Per data/ora corretti
+# For correct date/time
 ENV TZ=Europe/Rome
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
     && echo $TZ > /etc/timezone \
@@ -19,25 +19,25 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
 
 
 ####################
-##### Installo l'agente Wazuh
+##### Install Wazuh agent
 ####################
 
-# Installa l'agente Wazuh
+# Install the Wazuh agent
 RUN apt-get update && apt-get -y upgrade && apt-get install -y \
     curl \
     gnupg2 \
     procps \
     apt-transport-https
 
-# NB: La versione dell'agent deve essere uguale o inferiore a quella del manager.
-# Noi usiamo la versione 4.12.0 sia per l'agente che per il manager.
-# NB 2: Vanno settate le variabili d'ambiente WAZUH_MANAGER e WAZUH_AGENT_NAME;
-# la prima definisce l'indirizzo del Wazuh Manager (es. "wazuh.manager") a cui l'agente
-# si collegherà, la seconda definisce il nome con cui l'agente si identificherà.
-# NB 3: Di solito impostiamo queste variabili d'ambiente nel docker-compose.yml in cui
-# gestiamo anche Wazuh. In alternativa si possono definire di seguito.
-# NB 4: Il nome dell'agente Wazuh sembra non venire registrato durante la build del container.
-# Per essere sicuri, impostiamo il nome dell'agente nel file ossec.conf con sed a tempo di esecuzione.
+# Note 1: The agent version must be equal to or lower than the manager version.
+# We use version 4.12.0 for both the agent and the manager.
+# Note 2: The environment variables WAZUH_MANAGER and WAZUH_AGENT_NAME must be set;
+# the first defines the address of the Wazuh Manager (e.g. "wazuh.manager") to which the agent
+# will connect, the second defines the name with which the agent will identify itself.
+# Note 3: Usually we set these environment variables in the docker-compose.yml where
+# we also manage Wazuh. Alternatively, they can be defined below.
+# Note 4: The Wazuh agent name does not seem to be registered during the container build.
+# To be sure, we also set the agent name in the ossec.conf file with sed at runtime.
 
 #ARG WAZUH_MANAGER=wazuh.manager
 #ARG WAZUH_AGENT_NAME=agent47-wazuh
@@ -58,10 +58,10 @@ RUN curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH \
 
 
 ####################
-##### Installo Apache, PHP e MySQL (MariaDB)
+##### Install Apache, PHP and MySQL (MariaDB)
 ####################
-# Cambiando la versione dell'immagine base può cambiare la versione dei pacchetti PHP,
-# in questo modo è più facile impostarla.
+# Changing the base Docker image may change the PHP package version,
+# this way it is easier to set it everywhere it's needed.
 ARG PHP_VER=8.2
 
 RUN apt-get -y install \
@@ -71,40 +71,40 @@ RUN apt-get -y install \
     libapache2-mod-php${PHP_VER} \
     mariadb-server
 
-# Attiviamo dei moduli di Apache
+# Enable some Apache modules
 RUN a2enmod php${PHP_VER}
 RUN a2enmod rewrite
 
-# Aggiorniamo il file php.ini, attiviamo i tag corti <? ?>, riduciamo il logging
+# Update the php.ini file, enable short tags <? ?>, reduce logging
 RUN sed -i "s/short_open_tag = Off/short_open_tag = On/" /etc/php/${PHP_VER}/apache2/php.ini
 RUN sed -i "s/error_reporting = .*$/error_reporting = E_ERROR | E_WARNING | E_PARSE/" /etc/php/${PHP_VER}/apache2/php.ini
 
-# Alcune variabili di ambiente per Apache
+# Some environment variables for Apache
 ENV APACHE_RUN_USER=www-data
 ENV APACHE_RUN_GROUP=www-data
 ENV APACHE_LOG_DIR=/var/log/apache2
 ENV APACHE_LOCK_DIR=/var/lock/apache2
 ENV APACHE_PID_FILE=/var/run/apache2.pid
 
-# Configurazione di Apache per il nostro sito
+# Apache configuration for our site
 COPY apache-config.conf /etc/apache2/sites-enabled/000-default.conf
 
-# Fix per MariaDB
+# Fix for MariaDB
 RUN mkdir /var/run/mysqld && chown -R mysql:mysql /var/run/mysqld
 
 
 ####################
-##### Installo Suricata
+##### Install Suricata
 ####################
 RUN echo "deb http://deb.debian.org/debian/ bookworm-backports main" > /etc/apt/sources.list.d/bookworm-backports.sources.list
 RUN apt-get update && apt-get install -y suricata
 RUN suricata-update
-# Copia le regole di suricata (file mergeato suricata.rules) in /etc/suricata/rules, il path di default
+# Copy Suricata rules (merged suricata.rules file) to /etc/suricata/rules, the default path
 RUN cp /var/lib/suricata/rules/suricata.rules /etc/suricata/rules/suricata.rules
 
 
 ####################
-##### Aggiungo un utente non-root
+##### Add a non-root user
 ####################
 RUN apt-get install -y sudo \
     && useradd gb -d /home/gb -s /bin/bash -m -G sudo \
@@ -113,19 +113,19 @@ RUN apt-get install -y sudo \
 
 
 ####################
-##### Copiamo la app e degli script
+##### Copy the app and scripts
 ####################
-# Copiamo la nostra app Web nel container
+# Copy our web app into the container
 RUN rm -r /var/www/html
 COPY app/. /var/www/html
 RUN chown -R www-data:www-data /var/www/html
-# Per rendere più facile l'exploit
+# To make exploitation easier
 RUN chmod -R 777 /usr/lib/mysql/plugin && chmod -R 777 /var/www/html
 
-# Copiamo la nostra configurazione dell'agente Wazuh
+# Copy our Wazuh agent configuration
 COPY ossec.conf /var/ossec/etc/ossec.conf
 
-# Aggiungiamo alla home dell'utente gb dei file (finti) interessanti
+# Add some (fake) interesting files to the gb user's home
 COPY honeyfiles/. /home/gb
 RUN chown -R gb:gb /home/gb
 
@@ -134,7 +134,7 @@ COPY entrypoint.sh cyberbase.sql /
 # Cleanup
 RUN rm -rf /var/lib/apt/lists/*
 
-# Useremo la porta 80 per la web app
+# We will use port 80 for the web app
 EXPOSE 80
 
 CMD [ "bash", "/entrypoint.sh" ]

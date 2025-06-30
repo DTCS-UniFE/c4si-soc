@@ -18,30 +18,30 @@ def try_connect(ip, user, password):
             host=ip, user=user, password=password, connection_timeout=5
         )
         if connection.is_connected():
-            print(f"[SUCCESS] Connessione riuscita con utente: {user}")
+            print(f"[SUCCESS] Connection successful with user: {user}")
             connection.close()
             return True
     except Error as e:
-        print(f"[FAILURE] Connessione fallita con utente: {user} - Errore: {e}")
+        print(f"[FAILURE] Connection failed with user: {user} - Error: {e}")
     return False
 
 
 def main():
     if len(sys.argv) != 2:
-        print(f"Uso: {sys.argv[0]} <indirizzo_ip>")
+        print(f"Usage: {sys.argv[0]} <ip_address>")
         sys.exit(1)
 
     ip_address = sys.argv[1]
 
-    # Tentativi con credenziali casuali
+    # Attempts with random credentials
     for _ in range(2):
         user, password = generate_random_credentials()
-        print(f"Tentativo con utente: {user} e password: {password}")
+        print(f"Attempt with user: {user} and password: {password}")
         if try_connect(ip_address, user, password):
             return
 
-    # Tentativo con credenziali corrette
-    print("Tentativo finale con credenziali conosciute (root / 123456)")
+    # Final attempt with known credentials
+    print("Final attempt with known credentials (root / 123456)")
     try_connect(ip_address, "root", "123456")
 
 

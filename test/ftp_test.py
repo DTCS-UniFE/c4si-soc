@@ -4,34 +4,34 @@ from ftplib import FTP, all_errors, error_perm
 
 def main():
     if len(sys.argv) != 2:
-        print(f"Uso: {sys.argv[0]} <indirizzo_ip>")
+        print(f"Usage: {sys.argv[0]} <ip_address>")
         sys.exit(1)
 
     ip_address = sys.argv[1]
 
     try:
-        print(f"[+] Connessione a {ip_address} sulla porta FTP (21)...")
+        print(f"[+] Connecting to {ip_address} on FTP port (21)...")
         ftp = FTP(ip_address, timeout=10)
-        ftp.login("ftp", "anonymous")  # Connessione anonima
+        ftp.login("ftp", "anonymous")  # Anonymous login
 
-        print("\n[+] Invio comando FEAT...")
+        print("\n[+] Sending FEAT command...")
         try:
             features = ftp.sendcmd("FEAT")
             print("[FEAT Output]\n" + features)
         except error_perm as e:
-            print(f"[!] Errore FEAT: {e}")
+            print(f"[!] FEAT Error: {e}")
 
-        print("\n[+] Invio comando LIST...")
+        print("\n[+] Sending LIST command...")
         try:
             ftp.retrlines("LIST")
         except error_perm as e:
-            print(f"[!] Errore LIST: {e}")
+            print(f"[!] LIST Error: {e}")
 
         ftp.quit()
-        print("\n[+] Disconnessione completata.")
+        print("\n[+] Disconnection completed.")
 
     except all_errors as e:
-        print(f"[!] Errore FTP: {e}")
+        print(f"[!] FTP Error: {e}")
 
 
 if __name__ == "__main__":

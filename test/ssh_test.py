@@ -12,7 +12,7 @@ def random_string(length=8):
 
 def attempt_ssh(ip, username, password, attempt_number):
     print(
-        f"[Tentativo {attempt_number}] Connessione SSH a {ip} con username='{username}' e password='{password}'"
+        f"[Attempt {attempt_number}] SSH connection to {ip} with username='{username}' and password='{password}'"
     )
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -20,16 +20,16 @@ def attempt_ssh(ip, username, password, attempt_number):
     try:
         client.connect(ip, port=22, username=username, password=password, timeout=5)
         print(
-            f"[+] Connessione riuscita al tentativo {attempt_number} con {username}:{password}"
+            f"[+] Connection successful on attempt {attempt_number} with {username}:{password}"
         )
         client.close()
         return True
     except paramiko.AuthenticationException:
-        print(f"[-] Autenticazione fallita ({username}:{password})")
+        print(f"[-] Authentication failed ({username}:{password})")
     except paramiko.SSHException as e:
-        print(f"[!] Errore SSH: {e}")
+        print(f"[!] SSH error: {e}")
     except Exception as e:
-        print(f"[!] Errore generico: {e}")
+        print(f"[!] General error: {e}")
     finally:
         client.close()
     return False
@@ -37,19 +37,19 @@ def attempt_ssh(ip, username, password, attempt_number):
 
 def main():
     if len(sys.argv) != 2:
-        print(f"Uso: {sys.argv[0]} <indirizzo_ip>")
+        print(f"Usage: {sys.argv[0]} <ip_address>")
         sys.exit(1)
 
     ip = sys.argv[1]
 
-    # Tentativi con credenziali casuali
+    # Attempts with random credentials
     for i in range(1, 3):
         user = random_string()
         pwd = random_string()
         attempt_ssh(ip, user, pwd, i)
         time.sleep(1)
 
-    # Tentativo con credenziali corrette
+    # Attempt with correct credentials
     attempt_ssh(ip, "root", "123456", 3)
 
 
