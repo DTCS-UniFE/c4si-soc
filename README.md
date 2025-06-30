@@ -28,7 +28,7 @@ docker compose up --build --force-recreate
 Wazuh will be accessible at https://localhost with default credentials "admin" / "SecretPassword".
 The list of security events (logs) can be viewed by clicking "Threat Hunting" and then, at the top left, "Events".
 
-## Spegnimento
+## Shutdown
 ```bash
 docker compose down --volumes
 ```
