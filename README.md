@@ -1,7 +1,7 @@
 # Security Operations Center (SOC)
 This project allows you to quickly set up a SOC in a containerized environment. The SOC consists of:
 - **Wazuh (SIEM)**: log collection, analysis, aggregation, visualization, and alert generation
-- **Vulnerable PHP web application** with a **MySQL (MariaDB) database** and **Wazuh agent**. It contains (fake) "sensitive" files
+- **Vulnerable PHP web application** with a **MySQL (MariaDB) database**, **Suricata IDS/IPS**, and a **Wazuh agent**. It also contains (fake) "sensitive" files
 - **Honeypot** for several services, which logs access attempts and received commands and forwards them to Wazuh via Syslog
 
 During the SOC setup, various configurations are applied to Wazuh (rules, decoders, ingestion pipelines, and manager configuration). Additionally, some automated tests (login attempts and SQL Injection exploits) are executed to generate security events (logs) that will be visible in Wazuh.
@@ -14,7 +14,7 @@ The figure below shows the general architecture of the implemented SOC.
 - **honeypot/**: honeypot for several services
 - **test/**: attempts to access some honeypot services (SSH, FTP, MySQL) and Web App exploitation using Sqlmap
 - **setup-wazuh/**: uploads custom rules and decoders into Wazuh, as well as modifies its configuration, all via API
-- **web-application-with-wazuh/**: vulnerable PHP application + database + honeyfiles + Wazuh agent
+- **web-application-with-wazuh/**: vulnerable PHP application + database + Suricata + Wazuh agent + honeyfiles
 
 ## Main Files
 - `docker-compose.yml`: defines and orchestrates all containers
