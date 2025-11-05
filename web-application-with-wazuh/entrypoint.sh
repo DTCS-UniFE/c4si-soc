@@ -72,8 +72,8 @@ awk '
 ' /etc/suricata/suricata.yaml > /etc/suricata/suricata.yaml.tmp && \
 mv /etc/suricata/suricata.yaml.tmp /etc/suricata/suricata.yaml
 
-# Start Suricata
-suricata -c /etc/suricata/suricata.yaml -i eth0 &
+# Start Suricata in the background
+suricata -c /etc/suricata/suricata.yaml -i eth0 -D
 
 # Cat Apache's access log to keep the container open
 tail -f /var/log/apache2/access.log

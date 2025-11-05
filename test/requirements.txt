@@ -2,4 +2,8 @@ paramiko
 mysql-connector-python
 sqlmap
 requests
-urllib3 # should be installed by default with requests
+pymodbus
+bacpypes3
+cpppo
+python-snap7
+pysnmp

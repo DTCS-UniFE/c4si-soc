@@ -4,7 +4,7 @@ set -eu
 
 # Print IPs
 echo "Honeypot: my IPs are:"
-ip --color -br a | grep -v lo
+ip -br a | grep -v lo
 
 if [ -z "$WAZUH_MANAGER" ]; then
     WAZUH_MANAGER="wazuh.manager"

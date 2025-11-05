@@ -46,24 +46,50 @@ echo "Authenticating to API..."
 JWT="$(curl -sSf -X POST -u "$WAZUH_API_USER:$WAZUH_API_PASSWORD" -k \
     "https://$WAZUH_MANAGER:55000/security/user/authenticate" | jq -r .data.token)"
 
-echo "Adding decoders..."
+echo "Adding Application Honeypot decoder..."
 
 curl -sSf -X PUT -H "Authorization: Bearer $JWT" -H "Content-Type: application/octet-stream" -k \
     "https://$WAZUH_MANAGER:55000/decoders/files/honeypot_decoder.xml?wait_for_complete=true&overwrite=true" \
     --data-binary @honeypot_decoder.xml # --data-binary preserves newlines
 
 echo ""
-echo "Adding rules..."
+echo "Adding Industrial Honeypot decoder..."
+
+curl -sSf -X PUT -H "Authorization: Bearer $JWT" -H "Content-Type: application/octet-stream" -k \
+    "https://$WAZUH_MANAGER:55000/decoders/files/industrial_honeypot_decoder.xml?wait_for_complete=true&overwrite=true" \
+    --data-binary @industrial_honeypot_decoder.xml # --data-binary preserves newlines
+
+echo ""
+echo "Adding Application Honeypot rules..."
 
 curl -sSf -X PUT -H "Authorization: Bearer $JWT" -H "Content-Type: application/octet-stream" -k \
     "https://$WAZUH_MANAGER:55000/rules/files/honeypot_rules.xml?wait_for_complete=true&overwrite=true" \
     --data-binary @honeypot_rules.xml # --data-binary preserves newlines
+
+echo ""
+echo "Adding Industrial Honeypot rules..."
+
+curl -sSf -X PUT -H "Authorization: Bearer $JWT" -H "Content-Type: application/octet-stream" -k \
+    "https://$WAZUH_MANAGER:55000/rules/files/industrial_honeypot_rules.xml?wait_for_complete=true&overwrite=true" \
+    --data-binary @industrial_honeypot_rules.xml # --data-binary preserves newlines
 
 ###
 ### Configuration update
 ###
 
 curl -sSf -H "Authorization: Bearer $JWT" -k "https://$WAZUH_MANAGER:55000/manager/configuration?raw=true" > wazuh_manager.conf
+
+# Enable forced agent re-registration otherwise the agent on a container restart will not re-register
+sed -i '/<auth>/a\
+    <force>\
+        <enabled>yes</enabled>\
+        <disconnected_time enabled="no">0</disconnected_time>\
+        <after_registration_time>0</after_registration_time>\
+        <key_mismatch>yes</key_mismatch>\
+    </force>' wazuh_manager.conf
+
+# Disable SCA for better alert reading...
+sed -i '/<sca>/,/<\/sca>/ s/<enabled>yes<\/enabled>/<enabled>no<\/enabled>/' wazuh_manager.conf
 
 CONF_TO_ADD='
 
@@ -95,7 +121,7 @@ echo ""
 echo "Restarting wazuh manager..."
 
 curl -sSf -X PUT -H "Authorization: Bearer $JWT" -k \
-    "https://$WAZUH_MANAGER:55000/manager/restart?wait_for_complete=true"
+    "https://$WAZUH_MANAGER:55000/manager/restart"
 
 echo ""
 echo "Decoders, rules and configuration setup complete"

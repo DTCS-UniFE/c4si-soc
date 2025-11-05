@@ -1,0 +1,103 @@
+<group name="syslog,conpot,industrial-honeypot,json,">
+  <!-- Regola base per messaggi con sensorid=conpot -->
+  <rule id="100200" level="0">
+    <decoded_as>industrial-honeypot-syslog</decoded_as>
+    <field name="sensorid">^conpot$</field>
+    <description>Industrial Honeypot message.</description>
+    <options>no_full_log</options>
+  </rule>
+  
+  <!-- Esiste il campo event_type -->
+  <rule id="100201" level="0">
+    <if_sid>100200</if_sid>
+    <field name="event_type">\.+</field>
+    <description>Industrial Honeypot message with event_type.</description>
+    <options>no_full_log</options>
+  </rule>
+  
+  <!-- Non esiste il campo event_type -->
+  <rule id="100202" level="0">
+    <if_sid>100200</if_sid>
+    <description>Industrial Honeypot message without event_type.</description>
+    <options>no_full_log</options>
+  </rule>
+
+  <!-- Connessione rilevata -->
+  <rule id="100210" level="5">
+    <if_sid>100201</if_sid>
+    <field name="sensorid">^conpot$</field>
+    <field name="event_type">^NEW_CONNECTION$</field>
+    <description>Industrial Honeypot - Connessione $(data_type) rilevata: $(src_ip):$(src_port) -> $(dst_ip):$(dst_port)</description>
+  </rule>
+
+  <!-- Eventi generici con event_type diverso da quelli di connessione -->
+  <!-- Ci sono sia richiesta che risposta -->
+  <rule id="100220" level="5">
+    <if_sid>100201</if_sid>
+    <field name="request">\.+</field>
+    <field name="response">\.+</field>
+    <field name="event_type" type="pcre2">^(?!NEW_CONNECTION$|CONNECTION_LOST$|CONNECTION_CLOSE$)\.+</field>
+    <description>Industrial Honeypot - Traffico $(data_type) rilevato: $(event_type) -> Request: $(request), Response: $(response)</description>
+  </rule>
+
+  <!-- Esiste la richiesta -->
+  <rule id="100221" level="5">
+    <if_sid>100201</if_sid>
+    <field name="request">\.+</field>
+    <field name="event_type" type="pcre2">^(?!NEW_CONNECTION$|CONNECTION_LOST$|CONNECTION_CLOSE$)\.+</field>
+    <description>Industrial Honeypot - Traffico $(data_type) rilevato: $(event_type) -> Request: $(request)</description>
+  </rule>
+  
+  <!-- Esiste la risposta -->
+  <rule id="100222" level="5">
+    <if_sid>100201</if_sid>
+    <field name="response">\.+</field>
+    <field name="event_type" type="pcre2">^(?!NEW_CONNECTION$|CONNECTION_LOST$|CONNECTION_CLOSE$)\.+</field>
+    <description>Industrial Honeypot - Traffico $(data_type) rilevato: $(event_type) -> Response: $(response)</description>
+  </rule>
+  
+
+  <!-- Eventi senza campo event_type -->
+  <!-- Ci sono sia richiesta che risposta -->
+  <rule id="100240" level="5">
+    <if_sid>100202</if_sid>
+    <field name="request">\.+</field>
+    <field name="response">\.+</field>
+    <description>Industrial Honeypot - Traffico $(data_type) rilevato -> Request: $(request), Response: $(response)</description>
+  </rule>
+  
+  <!-- Esiste la richiesta -->
+  <rule id="100241" level="5">
+    <if_sid>100202</if_sid>
+    <field name="request">\.+</field>
+    <description>Industrial Honeypot - Traffico $(data_type) rilevato -> Request: $(request)</description>
+  </rule>
+  
+  <!-- Esiste la risposta -->
+  <rule id="100242" level="5">
+    <if_sid>100202</if_sid>
+    <field name="response">\.+</field>
+    <description>Industrial Honeypot - Traffico $(data_type) rilevato -> Response: $(response)</description>
+  </rule>
+
+  <!-- Suricata rules -->
+  <rule id="100300" level="0">
+    <decoded_as>industrial-honeypot-suricata-syslog</decoded_as>
+    <field name="timestamp">\.+</field>
+    <field name="event_type">\.+</field>
+    <description>Suricata messages from Industrial Honeypot.</description>
+    <options>no_full_log</options>
+    <group>suricata</group>
+  </rule>
+
+  <rule id="100301" level="3">
+    <if_sid>100300</if_sid>
+    <field name="event_type">^alert$</field>
+    <!-- Need to disable these categories, PCAP files create thousands of these alerts -->
+    <field name="alert.category" negate="yes">^Generic Protocol Command Decode$</field>
+    <field name="alert.category" negate="yes">^Detection of a non-standard protocol or event$</field>
+    <description>Industrial Honeypot Suricata: Alert - $(alert.signature)</description>
+    <options>no_full_log</options>
+    <group>suricata</group>
+  </rule>
+</group>

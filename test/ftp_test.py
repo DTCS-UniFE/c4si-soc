@@ -3,16 +3,26 @@ from ftplib import FTP, all_errors, error_perm
 
 
 def main():
-    if len(sys.argv) != 2:
-        print(f"Usage: {sys.argv[0]} <ip_address>")
+    if len(sys.argv) < 2:
+        print(f"Usage: {sys.argv[0]} <ip_address> [ftp_user] [ftp_pass]")
         sys.exit(1)
 
     ip_address = sys.argv[1]
 
+    user = "ftp"
+    password = "anonymous"
+
+    if len(sys.argv) >= 3:
+        user = sys.argv[2]
+    if len(sys.argv) >= 4:
+        password = sys.argv[3]
+
     try:
-        print(f"[+] Connecting to {ip_address} on FTP port (21)...")
+        print(
+            f"[+] Connecting to {ip_address} on FTP port (21) with {user}/{password}..."
+        )
         ftp = FTP(ip_address, timeout=10)
-        ftp.login("ftp", "anonymous")  # Anonymous login
+        ftp.login(user, password)
 
         print("\n[+] Sending FEAT command...")
         try:

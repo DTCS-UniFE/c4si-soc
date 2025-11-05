@@ -3,6 +3,7 @@ This project allows you to quickly set up a SOC in a containerized environment. 
 - **Wazuh (SIEM)**: log collection, analysis, aggregation, visualization, and alert generation
 - **Vulnerable PHP web application** with a **MySQL (MariaDB) database**, **Suricata IDS/IPS**, and a **Wazuh agent**. It also contains (fake) "sensitive" files
 - **Honeypot** for several services, which logs access attempts and received commands and forwards them to Wazuh via Syslog
+- **Industrial Honeypot (Conpot)** for several industrial protocols, which logs access attempts and requests and forwards them to Wazuh via Syslog
 
 During the SOC setup, various configurations are applied to Wazuh (rules, decoders, ingestion pipelines, and manager configuration). Additionally, some automated tests (login attempts and SQL Injection exploits) are executed to generate security events (logs) that will be visible in Wazuh.
 

@@ -1,4 +1,4 @@
-<group name="syslog,honeypot,">
+<group name="syslog,honeypot,application-honeypot,json">
   <rule id="100100" level="5">
     <decoded_as>honeypot-syslog</decoded_as>
     <action>connection</action>
