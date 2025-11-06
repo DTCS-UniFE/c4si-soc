@@ -13,13 +13,17 @@ The figure below shows the general architecture of the implemented SOC.
 
 ## Main Services
 - **honeypot/**: honeypot for several services
-- **test/**: attempts to access some honeypot services (SSH, FTP, MySQL) and Web App exploitation using Sqlmap
+- **industrial-honeypot/**: honeypot for several industrial services
+- **test/**: attempts to access some honeypot services (SSH, FTP, MySQL, ...), some industrial services (BACnet, Modbus, SNMP, ...), replay the traffic of PCAPs (if present), and Web App exploitation using Sqlmap
 - **setup-wazuh/**: uploads custom rules and decoders into Wazuh, as well as modifies its configuration, all via API
 - **web-application-with-wazuh/**: vulnerable PHP application + database + Suricata + Wazuh agent + honeyfiles
 
 ## Main Files
 - `docker-compose.yml`: defines and orchestrates all containers
 - `clone-and-setup-wazuh.sh`: clones the Wazuh-Docker repository and generates the required certificates
+
+## Pcaps
+If you want to test Suricata detection capabilities of industrial protocols, you can place one or more PCAP files in the [pcaps folder](test/pcaps/). IPs will automatically be rewritten with `tcprewrite` to send all traffic to industrial honeypot's Suricata (through `tcpreplay`), which will analyze it and report anomalies to Wazuh.
 
 ## Startup
 ```bash
