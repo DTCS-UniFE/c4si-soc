@@ -30,7 +30,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y \
     apt-transport-https
 
 # Note 1: The agent version must be equal to or lower than the manager version.
-# We use version 4.12.0 for both the agent and the manager.
+# We use version 4.14.0 for both the agent and the manager.
 # Note 2: The environment variables WAZUH_MANAGER and WAZUH_AGENT_NAME must be set;
 # the first defines the address of the Wazuh Manager (e.g. "wazuh.manager") to which the agent
 # will connect, the second defines the name with which the agent will identify itself.
@@ -54,7 +54,7 @@ RUN curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH \
     && echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" \
         | tee -a /etc/apt/sources.list.d/wazuh.list \
     && apt-get update \
-    && apt-get install -y wazuh-agent=4.12.0-1
+    && apt-get install -y wazuh-agent=4.14.0-1
 
 
 ####################
