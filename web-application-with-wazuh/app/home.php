@@ -36,9 +36,9 @@ function get_all_tickets(){
                     } else {
                         echo '
                         <div class="table-wrapper">
-                            <table>
+                            <table style="color: black">
                                 <thead>
-                                    <th>Id</th><th>Data</th><th>Testo</th><th>Utente</th>
+                                    <th style="color: black">Id</th><th style="color: black">Data</th><th style="color: black">Testo</th><th style="color: black">Utente</th>
                                 </thead>
                                 <tbody>';
                         foreach ($rows as $r) {

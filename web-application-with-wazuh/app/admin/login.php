@@ -9,7 +9,7 @@
 	<body class="landing is-preload">
 		<div id="page-wrapper">
 			<header id="header">
-				<a href="../home.php" ><h2 style="color: white; margin-left: 5px;">UnifeTicket</h2></a>
+				<a href="../home.php"><h2 style="color: white; margin-left: 5px;">FactoryTicket</h2></a>
 				<nav id="nav">
 					<ul>
 						<li><a href="home.php">Home</a></li>
@@ -48,6 +48,9 @@
 								</div>
 								<div class="col-6 col-12-mobile">
 									<a href="register.php" class="button">Registrati</a>
+								</div>
+								<div class="col-6 col-12-mobile">
+									<a href="../login.php">Login utente</a>
 								</div>
 							</form>
 						</section>

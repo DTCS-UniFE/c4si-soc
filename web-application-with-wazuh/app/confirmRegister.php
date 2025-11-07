@@ -51,7 +51,7 @@ $conn = null;
 <body class="landing is-preload">
 <div id="page-wrapper">
     <header id="header">
-        <a href="home.php" ><h2 style="color: white;">UnifeTicket</h2></a>
+        <a href="home.php"><h2 style="color: white; margin-left: 5px;">FactoryTicket</h2></a>
         <nav id="nav">
             <ul>
                 <li><a href="home.php">Home</a></li>

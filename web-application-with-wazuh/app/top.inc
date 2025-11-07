@@ -1,6 +1,6 @@
 <?php session_start(); ?>
 <header id="header" class="alt">
-    <a href="home.php" ><h2 style="color: white; margin-left: 5px;">UnifeTicket</h2></a>
+    <a href="home.php"><h2 style="color: white; margin-left: 5px;">FactoryTicket</h2></a>
     <nav id="nav">
         <ul>
             <li><a href="home.php">Home</a></li>
