@@ -4,8 +4,10 @@ FROM dtagdevsec/conpot:24.04.1
 # Default user is conpot
 USER root
 
-# Install Suricata, ip, util-linux for "logger", jq for processing logs
-RUN apk add --no-cache suricata iproute2 util-linux jq \
+# Install Suricata, ip, util-linux for "logger",
+# jq for processing logs, tzdata for date/time
+RUN apk add --no-cache suricata iproute2 util-linux jq tzdata \
+    && ln -s /usr/share/zoneinfo/Europe/Rome /etc/localtime \
     && suricata-update
 
 # Download custom rules
