@@ -8,7 +8,7 @@ services:
   setup-wazuh:
     build: setup-wazuh
     environment:
-      # These are the default credentials that come with Wazuh-docker 4.12.0,
+      # These are the default credentials that come with Wazuh-docker 4.14.0,
       # our chosen version for Wazuh and its agent.
       # If you want to change these credentials, you must also change them
       # in ./wazuh-docker/single-node/docker-compose.yml.
